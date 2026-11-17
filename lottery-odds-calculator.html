@@ -49,6 +49,14 @@
   .mini{width:auto;padding:6px 14px;font-size:.85rem;}
   .danger{background:transparent;color:var(--red);border:1px solid var(--red);}
   .saved-row{border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:10px;}
+  .pro-card{position:relative;}
+  .pro-card > h2{position:relative;z-index:6;}
+  .pro-badge{display:inline-block;background:var(--accent);color:#0d1117;font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:8px;vertical-align:middle;letter-spacing:.02em;}
+  .lock-overlay{position:absolute;inset:0;border-radius:12px;background:rgba(13,17,23,.87);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:24px;z-index:5;cursor:pointer;}
+  .lock-overlay svg{color:var(--accent);}
+  .lock-overlay .lock-title{font-weight:700;font-size:1rem;}
+  .lock-overlay .lock-desc{color:var(--muted);font-size:.85rem;max-width:44ch;}
+  .lock-overlay .lock-btn{display:inline-block;background:var(--accent);color:#0d1117;border-radius:8px;padding:10px 18px;font-weight:700;font-size:.9rem;}
 
   /* narrow screens: turn data tables into stacked cards */
   @media (max-width: 560px){
@@ -106,8 +114,8 @@
     </div>
   </div>
 
-  <div class="card">
-    <h2>3 · Expected value (EV)</h2>
+  <div class="card pro-card">
+    <h2>3 · Expected value (EV)<span class="pro-badge">PRO</span></h2>
     <label for="jackpot">Jackpot — cash value (USD)</label>
     <input id="jackpot" type="number" min="0" step="1000000" value="200000000">
     <label for="cost">Ticket price (USD)</label>
@@ -153,6 +161,12 @@
     <div id="evResult" style="margin-top:12px;"></div>
     <div id="payoutOut" style="margin-top:14px;"></div>
     <div id="evNote" class="note"></div>
+    <div class="lock-overlay" data-pro="ev" role="button" tabindex="0">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+      <div class="lock-title">Expected value is a Pro feature</div>
+      <div class="lock-desc">Unlock tax-adjusted EV, expected loss, and lump-sum vs annuity — one-time $24.</div>
+      <span class="lock-btn">Unlock Pro</span>
+    </div>
   </div>
 
   <div class="card">
@@ -225,8 +239,8 @@
     <input type="file" id="jackpotFile" accept=".csv,text/csv" style="display:none;">
   </div>
 
-  <div class="card">
-    <h2>8 · Multi-ticket odds &amp; game comparison</h2>
+  <div class="card pro-card">
+    <h2>8 · Multi-ticket odds &amp; game comparison<span class="pro-badge">PRO</span></h2>
     <label for="multiTickets">Tickets with distinct number sets</label>
     <input id="multiTickets" type="number" min="1" max="100000" value="10">
     <table style="margin-top:8px;">
@@ -239,6 +253,12 @@
       <div id="compareBody"></div>
     </div>
     <button type="button" id="exportOddsCsvBtn" class="btn2" style="margin-top:12px;">Export odds to CSV</button>
+    <div class="lock-overlay" data-pro="multi" role="button" tabindex="0">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+      <div class="lock-title">Multi-ticket odds &amp; comparison are Pro features</div>
+      <div class="lock-desc">Unlock probability across N tickets, game comparison, and CSV export — one-time $24.</div>
+      <span class="lock-btn">Unlock Pro</span>
+    </div>
   </div>
 
   <p class="disclaimer">Entertainment only. This tool does not predict results or improve your odds — no tool can, because draws are independent random events. It is not affiliated with or endorsed by Powerball, Mega Millions, EuroMillions or any lottery operator. 18+. Play responsibly.</p>
@@ -1167,6 +1187,10 @@ function init(){
   renderCompare();
   autoCheckOnLoad();
   setupPWA();
+
+  document.querySelectorAll(".lock-overlay").forEach(function(o){
+    o.addEventListener("click", function(){ window.location.href = "index.html#pricing"; });
+  });
 }
 init();
 </script>

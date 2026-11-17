@@ -76,7 +76,7 @@
   .honesty h2{font-size:1.7rem;letter-spacing:-.02em;margin:0 0 14px;max-width:24ch;}
   .honesty p{color:var(--muted);max-width:62ch;margin:0;}
 
-  .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:stretch;}
+  .pricing{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;align-items:stretch;}
   .plan{border:1px dashed var(--ink3);border-radius:0;padding:24px 20px;display:flex;flex-direction:column;background:var(--ink2);}
   .plan.hot{border:1px solid var(--gold);border-style:solid;background:linear-gradient(180deg,#1c2a45 0%,#141f35 100%);}
   .plan .name{font-weight:800;font-size:1.1rem;letter-spacing:-.01em;}
@@ -217,7 +217,7 @@
         </ul>
         <div class="buy"><button class="btn primary" data-plan="pro" type="button">Buy Pro</button></div>
       </div>
-      <div class="plan">
+      <div class="plan" style="display:none;">
         <div class="name">Source code</div>
         <div class="price">$79</div>
         <div class="freq">one-time</div>
