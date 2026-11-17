@@ -31,11 +31,14 @@
   .wrap{max-width:880px;margin:0 auto;padding:0 20px;}
   a{color:var(--gold);}
 
-  .topbar{display:flex;justify-content:space-between;align-items:center;padding:18px 0;}
-  .brand{font-weight:800;letter-spacing:-.02em;font-size:1.15rem;color:var(--paper);text-decoration:none;}
+  .topbar{display:flex;align-items:center;padding:18px 0;gap:18px;}
+  .brand{font-weight:800;letter-spacing:-.02em;font-size:1.15rem;color:var(--paper);text-decoration:none;margin-right:auto;}
   .brand .dot{color:var(--gold);}
-  .topbar nav a{color:var(--muted);text-decoration:none;font-size:.9rem;margin-left:18px;}
-  .topbar nav a.cta{color:var(--ink);background:var(--gold);border-radius:6px;padding:8px 14px;font-weight:700;}
+  .main-nav{display:flex;align-items:center;gap:18px;}
+  .main-nav a{color:var(--muted);text-decoration:none;font-size:.9rem;}
+  .nav-cta{color:var(--ink);background:var(--gold);border-radius:6px;padding:8px 14px;font-weight:700;text-decoration:none;white-space:nowrap;}
+  .menu-toggle{display:none;background:none;border:0;padding:8px;cursor:pointer;flex-direction:column;gap:5px;align-items:center;justify-content:center;}
+  .menu-toggle span{display:block;width:22px;height:2px;background:var(--paper);border-radius:2px;}
 
   .hero{padding:56px 0 32px;}
   .hero h1{font-size:2.5rem;line-height:1.1;letter-spacing:-.03em;margin:0 0 16px;max-width:17ch;}
@@ -110,7 +113,13 @@
   @media (max-width:700px){
     .hero h1{font-size:2rem;}
     .steps,.stats,.pricing,.legal{grid-template-columns:1fr;}
-    .topbar nav a{margin-left:12px;}
+    .topbar{flex-wrap:wrap;gap:12px;}
+    .brand{margin-right:0;}
+    .menu-toggle{display:flex;}
+    .main-nav{display:none;width:100%;order:10;flex-direction:column;gap:0;}
+    .main-nav.open{display:flex;}
+    .main-nav a{padding:12px 0;border-top:1px solid var(--ink3);}
+    .nav-cta{margin-left:auto;}
   }
 </style>
 </head>
@@ -119,12 +128,15 @@
 
   <header class="topbar">
     <a class="brand" href="index.html">TrueOdds<span class="dot">.</span></a>
-    <nav>
+    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="main-nav" id="mainNav">
       <a href="#how">How it works</a>
       <a href="#pricing">Pricing</a>
       <a href="lottery-odds-calculator.html">Calculator</a>
-      <a class="cta" href="#pricing">Get Pro</a>
     </nav>
+    <a class="cta nav-cta" href="#pricing">Get Pro</a>
   </header>
 
   <section class="hero">
@@ -314,6 +326,22 @@ function showToast(msg){
 document.querySelectorAll("[data-plan]").forEach(b => {
   b.addEventListener("click", () => buy(b.getAttribute("data-plan")));
 });
+
+// Mobile nav toggle
+const menuToggle = document.getElementById("menuToggle");
+const mainNav = document.getElementById("mainNav");
+if(menuToggle && mainNav){
+  menuToggle.addEventListener("click", function(){
+    const open = mainNav.classList.toggle("open");
+    menuToggle.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+  mainNav.querySelectorAll("a").forEach(function(a){
+    a.addEventListener("click", function(){
+      mainNav.classList.remove("open");
+      menuToggle.setAttribute("aria-expanded", "false");
+    });
+  });
+}
 </script>
 
 <script type="application/ld+json">
