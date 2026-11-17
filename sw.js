@@ -3,7 +3,7 @@ const CACHE = "trueodds-v1";
 const ASSETS = [
   "./",
   "./lottery-odds-calculator.html",
-  "./landing-page.html"
+  "./index.html"
 ];
 
 self.addEventListener("install", function(e){
