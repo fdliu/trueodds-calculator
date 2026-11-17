@@ -113,12 +113,13 @@
   @media (max-width:700px){
     .hero h1{font-size:2rem;}
     .steps,.stats,.pricing,.legal{grid-template-columns:1fr;}
-    .topbar{flex-wrap:wrap;gap:12px;}
+    .topbar{gap:12px;position:relative;}
     .brand{margin-right:0;}
     .menu-toggle{display:flex;}
-    .main-nav{display:none;width:100%;order:10;flex-direction:column;gap:0;}
+    .main-nav{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;z-index:60;background:var(--ink2);border:1px solid var(--ink3);border-radius:8px;padding:4px 16px;box-shadow:0 10px 30px rgba(0,0,0,.45);}
     .main-nav.open{display:flex;}
     .main-nav a{padding:12px 0;border-top:1px solid var(--ink3);}
+    .main-nav a:first-child{border-top:none;}
     .nav-cta{margin-left:auto;}
   }
 </style>
