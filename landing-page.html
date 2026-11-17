@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lottery Odds Calculator — Real Odds &amp; Expected Value (EV)</title>
+<meta name="description" content="Free lottery odds calculator and expected value (EV) calculator for Powerball, Mega Millions and EuroMillions. See the exact odds of every prize tier and whether a ticket is worth buying.">
+<meta name="robots" content="index,follow">
+<!-- TODO: replace with your real domain -->
+<!-- <link rel="canonical" href="https://YOURDOMAIN.com/"> -->
+<meta property="og:title" content="TrueOdds — Know Your Real Lottery Odds">
+<meta property="og:description" content="The honest lottery odds & expected value calculator. No fake predictions — just your real odds and EV.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23f2b73c'/><circle cx='50' cy='50' r='26' fill='%230e1726'/></svg>">
+<style>
+  :root{
+    --ink:#0e1726;
+    --ink2:#141f35;
+    --ink3:#22314f;
+    --paper:#f4efe2;
+    --muted:#9aa6bd;
+    --gold:#f2b73c;
+    --gold-ink:#241700;
+    --red:#e5534d;
+    --green:#4cae63;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;background:var(--ink);color:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .mono{font-family:ui-monospace,"SF Mono","Cascadia Mono","Segoe UI Mono",Consolas,monospace;font-variant-numeric:tabular-nums;}
+  .wrap{max-width:880px;margin:0 auto;padding:0 20px;}
+  a{color:var(--gold);}
+
+  .topbar{display:flex;justify-content:space-between;align-items:center;padding:18px 0;}
+  .brand{font-weight:800;letter-spacing:-.02em;font-size:1.15rem;color:var(--paper);text-decoration:none;}
+  .brand .dot{color:var(--gold);}
+  .topbar nav a{color:var(--muted);text-decoration:none;font-size:.9rem;margin-left:18px;}
+  .topbar nav a.cta{color:var(--ink);background:var(--gold);border-radius:6px;padding:8px 14px;font-weight:700;}
+
+  .hero{padding:56px 0 32px;}
+  .hero h1{font-size:2.5rem;line-height:1.1;letter-spacing:-.03em;margin:0 0 16px;max-width:17ch;}
+  .hero .sub{color:var(--muted);font-size:1.1rem;max-width:60ch;margin:0 0 28px;}
+  .ballrow{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px;}
+  .ball{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:44px;padding:0 8px;border-radius:50%;background:var(--ink2);border:1px solid var(--ink3);font-weight:800;font-size:1.05rem;font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;}
+  .ball.gold{background:var(--gold);color:var(--gold-ink);border-color:var(--gold);}
+  .ballrow-caption{color:var(--muted);font-size:.82rem;margin:0 0 32px;}
+  .odds-banner{border-top:2px dashed var(--ink3);border-bottom:2px dashed var(--ink3);padding:28px 0;margin-bottom:28px;}
+  .odds-banner .label{color:var(--muted);font-size:.9rem;margin:0 0 6px;}
+  .odds-banner .value{font-size:2.1rem;font-weight:800;letter-spacing:-.02em;color:var(--paper);font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;word-break:break-all;}
+  .odds-banner .note{color:var(--muted);font-size:.85rem;margin-top:6px;}
+  .hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;}
+  .btn{display:inline-block;text-decoration:none;border-radius:6px;padding:14px 22px;font-weight:700;font-size:1rem;border:1px solid transparent;cursor:pointer;}
+  .btn.primary{background:var(--gold);color:var(--gold-ink);}
+  .btn.ghost{background:transparent;color:var(--paper);border-color:var(--ink3);}
+
+  section{padding:40px 0;}
+  .section-head{max-width:60ch;margin-bottom:28px;}
+  .section-head h2{font-size:1.7rem;letter-spacing:-.02em;margin:0 0 10px;}
+  .section-head p{color:var(--muted);margin:0;}
+
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .step{border:1px solid var(--ink3);border-radius:0;padding:20px;background:var(--ink2);}
+  .step .num{font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;color:var(--gold);font-size:1.2rem;font-weight:700;display:block;margin-bottom:10px;}
+  .step h3{font-size:1.05rem;margin:0 0 6px;}
+  .step p{color:var(--muted);font-size:.92rem;margin:0;}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--ink3);border:1px solid var(--ink3);}
+  .stat{background:var(--ink);padding:22px 18px;}
+  .stat .num{font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;font-size:1.3rem;font-weight:700;color:var(--paper);word-break:break-all;}
+  .stat .lbl{color:var(--muted);font-size:.82rem;margin-top:4px;}
+
+  .honesty{border:1px solid var(--gold);border-radius:0;padding:36px 28px;background:var(--ink2);}
+  .honesty h2{font-size:1.7rem;letter-spacing:-.02em;margin:0 0 14px;max-width:24ch;}
+  .honesty p{color:var(--muted);max-width:62ch;margin:0;}
+
+  .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:stretch;}
+  .plan{border:1px dashed var(--ink3);border-radius:0;padding:24px 20px;display:flex;flex-direction:column;background:var(--ink2);}
+  .plan.hot{border:1px solid var(--gold);border-style:solid;background:linear-gradient(180deg,#1c2a45 0%,#141f35 100%);}
+  .plan .name{font-weight:800;font-size:1.1rem;letter-spacing:-.01em;}
+  .plan .price{font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;font-size:2rem;font-weight:800;margin:10px 0 2px;}
+  .plan .freq{color:var(--muted);font-size:.82rem;margin-bottom:16px;}
+  .plan ul{list-style:none;padding:0;margin:0 0 20px;flex:1;}
+  .plan li{color:var(--muted);font-size:.9rem;padding:6px 0;border-bottom:1px solid var(--ink3);}
+  .plan li:last-child{border-bottom:none;}
+  .plan .buy{margin-top:auto;}
+  .plan .buy .btn{width:100%;text-align:center;}
+  .pricing-note{color:var(--muted);font-size:.85rem;margin-top:14px;}
+
+  .faq-item{border-bottom:1px solid var(--ink3);padding:18px 0;}
+  .faq-item h3{font-size:1.05rem;margin:0 0 8px;}
+  .faq-item p{color:var(--muted);margin:0;max-width:72ch;}
+
+  .legal{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .legal-item{border:1px solid var(--ink3);border-radius:0;padding:20px;background:var(--ink2);}
+  .legal-item h3{font-size:1.05rem;margin:0 0 8px;}
+  .legal-item p{color:var(--muted);font-size:.9rem;margin:0;}
+
+  .final-cta{padding:48px 0 64px;text-align:center;}
+  .final-cta h2{font-size:1.8rem;letter-spacing:-.02em;margin:0 0 12px;}
+
+  footer{border-top:1px solid var(--ink3);padding:24px 0 40px;color:var(--muted);font-size:.8rem;}
+  footer .foot-links{margin-top:10px;}
+  footer .foot-links a{color:var(--muted);text-decoration:none;margin-right:14px;}
+  footer .foot-links a:hover{color:var(--gold);}
+  footer .disc{margin-top:12px;font-size:.75rem;}
+
+  #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--paper);color:var(--ink);padding:12px 18px;border-radius:6px;font-size:.9rem;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:90vw;}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  @media (max-width:700px){
+    .hero h1{font-size:2rem;}
+    .steps,.stats,.pricing,.legal{grid-template-columns:1fr;}
+    .topbar nav a{margin-left:12px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <a class="brand" href="landing-page.html">TrueOdds<span class="dot">.</span></a>
+    <nav>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="lottery-odds-calculator.html">Calculator</a>
+      <a class="cta" href="#pricing">Get Pro</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Know your real lottery odds before you buy a ticket.</h1>
+    <p class="sub">TrueOdds is a free lottery odds calculator and expected value (EV) calculator for Powerball, Mega Millions and EuroMillions. See the exact odds of every prize tier — no fake &quot;winning predictions.&quot;</p>
+
+    <div class="ballrow" aria-hidden="true">
+      <span class="ball">7</span><span class="ball">14</span><span class="ball">23</span><span class="ball">36</span><span class="ball">48</span><span class="ball gold">12</span>
+    </div>
+    <p class="ballrow-caption">5 main numbers + 1 bonus ball — the format behind every ticket.</p>
+
+    <div class="odds-banner">
+      <p class="label">Your real odds of winning the Powerball jackpot</p>
+      <div class="value">1 in 292,201,338</div>
+      <p class="note">That is not a slogan. It is the exact probability — and we show it for every prize tier.</p>
+    </div>
+
+    <div class="hero-cta">
+      <a class="btn primary" href="lottery-odds-calculator.html">Try the free calculator</a>
+      <a class="btn ghost" href="#pricing">See pricing</a>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="section-head">
+      <h2>Three steps, zero guesswork.</h2>
+      <p>The calculator does the math a lottery ticket never shows you.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><span class="num">01</span><h3>Pick a game</h3><p>Powerball, Mega Millions, EuroMillions — or enter a custom format.</p></div>
+      <div class="step"><span class="num">02</span><h3>See every tier</h3><p>The exact odds and probability of each prize level, in plain numbers.</p></div>
+      <div class="step"><span class="num">03</span><h3>Check the EV</h3><p>Is one ticket actually worth buying? The expected value answers it.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="stats">
+      <div class="stat"><div class="num">1 in 292,201,338</div><div class="lbl">Powerball jackpot odds</div></div>
+      <div class="stat"><div class="num">1 in 290,472,336</div><div class="lbl">Mega Millions jackpot odds</div></div>
+      <div class="stat"><div class="num">1 in 139,838,160</div><div class="lbl">EuroMillions jackpot odds</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="honesty">
+      <h2>If a tool promises to predict the next draw, it is lying to you.</h2>
+      <p>Lottery draws are independent random events. No &quot;AI&quot; can see the future, and no strategy changes your odds. TrueOdds shows the only honest numbers a player can know: your real odds, and the expected value of a ticket.</p>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="section-head">
+      <h2>Pay once. Know the truth forever.</h2>
+      <p>One-time payment, lifetime access, 30-day money-back guarantee.</p>
+    </div>
+    <div class="pricing">
+      <div class="plan">
+        <div class="name">Free</div>
+        <div class="price">$0</div>
+        <div class="freq">forever</div>
+        <ul>
+          <li>Odds of every prize tier</li>
+          <li>Quick pick generator</li>
+          <li>Powerball · Mega Millions · EuroMillions</li>
+        </ul>
+        <div class="buy"><a class="btn ghost" href="lottery-odds-calculator.html">Use free</a></div>
+      </div>
+      <div class="plan hot">
+        <div class="name">Pro</div>
+        <div class="price">$24</div>
+        <div class="freq">one-time</div>
+        <ul>
+          <li>Everything in Free</li>
+          <li>Expected value (EV) calculator</li>
+          <li>Custom game formats</li>
+          <li>Saved picks &amp; no ads</li>
+        </ul>
+        <div class="buy"><button class="btn primary" data-plan="pro" type="button">Buy Pro</button></div>
+      </div>
+      <div class="plan">
+        <div class="name">Source code</div>
+        <div class="price">$79</div>
+        <div class="freq">one-time</div>
+        <ul>
+          <li>Full app source + docs</li>
+          <li>Rebrand &amp; resell rights</li>
+          <li>Landing page included</li>
+        </ul>
+        <div class="buy"><button class="btn ghost" data-plan="source" type="button">Buy source</button></div>
+      </div>
+    </div>
+    <p class="pricing-note">Checkout is hosted by Gumroad / Lemon Squeezy (Merchant of Record) — VAT and sales tax are handled for you. Payouts via PayPal or Payoneer.</p>
+  </section>
+
+  <section id="faq">
+    <div class="section-head">
+      <h2>Questions people actually ask.</h2>
+    </div>
+    <div class="faq-item">
+      <h3>Can a lottery calculator predict winning numbers?</h3>
+      <p>No. Nothing can. Lottery draws are independent, so past results do not change future odds. A real calculator shows your probability and expected value — not predictions.</p>
+    </div>
+    <div class="faq-item">
+      <h3>What are the odds of winning Powerball?</h3>
+      <p>The jackpot odds are 1 in 292,201,338 (5 of 69 white balls plus the Powerball from 1–26). The odds of winning any prize are about 1 in 24.87.</p>
+    </div>
+    <div class="faq-item">
+      <h3>What are the odds of winning Mega Millions?</h3>
+      <p>The jackpot odds are 1 in 290,472,336 (5 of 70 white balls plus the Mega Ball from 1–24).</p>
+    </div>
+    <div class="faq-item">
+      <h3>Is buying a lottery ticket worth it?</h3>
+      <p>For almost every draw, the expected value of a ticket is negative — you are buying entertainment, not an investment. Only an unusually large jackpot can briefly push EV toward break-even.</p>
+    </div>
+    <div class="faq-item">
+      <h3>How is expected value (EV) calculated?</h3>
+      <p>EV sums the probability of each prize tier times its payout, then subtracts the ticket price. For the jackpot we also model the chance that other winners split it with you.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Is TrueOdds affiliated with any lottery operator?</h3>
+      <p>No. TrueOdds is an independent educational tool. It is not affiliated with or endorsed by Powerball, Mega Millions, EuroMillions or any operator.</p>
+    </div>
+  </section>
+
+  <section id="trust">
+    <div class="section-head">
+      <h2>Trust &amp; transparency.</h2>
+      <p>The fine print, in plain English — because an honest tool tells you where its numbers come from.</p>
+    </div>
+    <div class="legal">
+      <div class="legal-item">
+        <h3>Privacy</h3>
+        <p>TrueOdds runs entirely in your browser. There is no account, no server, and no tracking. Your saved numbers stay in your own browser (localStorage) and never leave your device. If you buy, the payment is processed by Gumroad or Lemon Squeezy under their privacy policy.</p>
+      </div>
+      <div class="legal-item">
+        <h3>30-day refund</h3>
+        <p>Every paid purchase includes a 30-day, no-questions-asked money-back guarantee. Within 30 days of purchase, request a refund through Gumroad or Lemon Squeezy and you receive a full refund.</p>
+      </div>
+      <div class="legal-item">
+        <h3>Where the data comes from</h3>
+        <p>Draw history is real public data from powerball.com and national-lottery.com. The jackpot trend chart uses clearly-labeled sample data — production replaces it with a live feed. Odds and EV are computed from the official ball formats, never guessed.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <h2>Stop guessing. Start with the real numbers.</h2>
+    <a class="btn primary" href="lottery-odds-calculator.html">Open the free calculator</a>
+  </section>
+
+  <footer>
+    <div>© 2026 TrueOdds. One-time payments via Gumroad / Lemon Squeezy.</div>
+    <div class="foot-links">
+      <a href="#trust">Privacy</a><a href="#trust">Refunds</a><a href="#trust">Data sources</a>
+    </div>
+    <div class="disc">Entertainment and education only. This tool does not predict results or improve your odds. It is not affiliated with or endorsed by any lottery operator. 18+. Play responsibly.</div>
+  </footer>
+</div>
+
+<div id="toast" role="status"></div>
+
+<script>
+"use strict";
+// Replace these with your real hosted checkout links (Gumroad / Lemon Squeezy / Stripe Payment Link).
+// Keep the placeholder "YOUR_ACCOUNT" as long as the link is not configured.
+const CHECKOUT = {
+  pro: "https://YOUR_ACCOUNT.gumroad.com/l/trueodds-pro",
+  source: "https://YOUR_ACCOUNT.gumroad.com/l/trueodds-source"
+};
+
+function buy(plan){
+  const url = CHECKOUT[plan];
+  if(!url || url.indexOf("YOUR_ACCOUNT") !== -1){
+    showToast("Checkout not configured yet — paste your Gumroad or Lemon Squeezy link into CHECKOUT in the code.");
+    return;
+  }
+  window.location.href = url;
+}
+let toastTimer = null;
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 3200);
+}
+document.querySelectorAll("[data-plan]").forEach(b => {
+  b.addEventListener("click", () => buy(b.getAttribute("data-plan")));
+});
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"Can a lottery calculator predict winning numbers?","acceptedAnswer":{"@type":"Answer","text":"No. Nothing can. Lottery draws are independent, so past results do not change future odds. A real calculator shows your probability and expected value, not predictions."}},
+    {"@type":"Question","name":"What are the odds of winning Powerball?","acceptedAnswer":{"@type":"Answer","text":"The jackpot odds are 1 in 292,201,338 (5 of 69 white balls plus the Powerball from 1 to 26). The odds of winning any prize are about 1 in 24.87."}},
+    {"@type":"Question","name":"What are the odds of winning Mega Millions?","acceptedAnswer":{"@type":"Answer","text":"The jackpot odds are 1 in 290,472,336 (5 of 70 white balls plus the Mega Ball from 1 to 24)."}},
+    {"@type":"Question","name":"Is buying a lottery ticket worth it?","acceptedAnswer":{"@type":"Answer","text":"For almost every draw the expected value of a ticket is negative. Only an unusually large jackpot can briefly push expected value toward break-even."}},
+    {"@type":"Question","name":"How is expected value (EV) calculated?","acceptedAnswer":{"@type":"Answer","text":"EV sums the probability of each prize tier times its payout, then subtracts the ticket price. The jackpot also models the chance that other winners split it with you."}}
+  ]
+}
+</script>
+</body>
+</html>
