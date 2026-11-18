@@ -1,6 +1,6 @@
-# TrueOdds — Lottery Odds & Expected Value Calculator
+# TrueOdds — Odds & Expected Value Calculator
 
-**The honest lottery tool.** TrueOdds shows your real odds and expected value (EV) for Powerball, Mega Millions and EuroMillions — with no fake "winning predictions," because no tool can predict an independent random draw.
+**The honest odds & EV tool.** TrueOdds shows your real odds and expected value (EV) for Powerball, Mega Millions and EuroMillions — with no fake "winning predictions," because no tool can predict an independent random draw.
 
 This is a single-file, zero-dependency web app that runs entirely in the browser. Nothing to build, nothing to install.
 
@@ -94,4 +94,4 @@ This source is **proprietary**. Access is for evaluation and personal use only. 
 
 ## Disclaimer
 
-Entertainment and educational use only. Not affiliated with or endorsed by Powerball, Mega Millions, EuroMillions, or any lottery operator. 18+. Play responsibly. The tool does not predict results or improve your odds.
+Entertainment and educational use only. Not affiliated with or endorsed by Powerball, Mega Millions, EuroMillions, or any game operator. 18+. Play responsibly. The tool does not predict results or improve your odds.

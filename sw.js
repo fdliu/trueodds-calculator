@@ -1,4 +1,4 @@
-/* TrueOdds service worker — offline cache for the lottery odds calculator. */
+/* TrueOdds service worker — offline cache for the odds & EV calculator. */
 const CACHE = "trueodds-v1";
 const ASSETS = [
   "./",
