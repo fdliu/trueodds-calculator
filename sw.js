@@ -1,8 +1,8 @@
 /* TrueOdds service worker — offline cache for the odds & EV calculator. */
-const CACHE = "trueodds-v1";
+const CACHE = "trueodds-v2";
 const ASSETS = [
   "./",
-  "./lottery-odds-calculator.html",
+  "./calculator.html",
   "./index.html"
 ];
 

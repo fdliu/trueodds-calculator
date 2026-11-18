@@ -34,7 +34,7 @@ This is a single-file, zero-dependency web app that runs entirely in the browser
 
 | File | What it is |
 |---|---|
-| `lottery-odds-calculator.html` | The single-file calculator app (all CSS + JS inline). |
+| `calculator.html` | The single-file calculator app (all CSS + JS inline). |
 | `index.html` | Marketing / sales page with pricing and checkout links. |
 | `sw.js` | PWA service worker for offline caching. |
 | `product-plan.md` | Math formulas, English landing-page copy, and pricing rationale. |
@@ -42,7 +42,7 @@ This is a single-file, zero-dependency web app that runs entirely in the browser
 
 ## Run it
 
-Open `lottery-odds-calculator.html` in any modern browser — no server, no build step.
+Open `calculator.html` in any modern browser — no server, no build step.
 
 ### PWA (install + offline)
 

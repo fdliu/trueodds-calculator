@@ -2,7 +2,7 @@
 
 ## 一、核心算法公式
 
-已内嵌在 `lottery-odds-calculator.html` 的 JS 注释里，这里给出数学表述：
+已内嵌在 `calculator.html` 的 JS 注释里，这里给出数学表述：
 
 - 组合数：`C(n, k) = n! / (k! · (n-k)!)`
 - 命中概率：`P(恰好命中 x 个) = C(选, x) · C(总-选, 选-x) / C(总, 选)`
