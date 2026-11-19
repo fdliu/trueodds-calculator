@@ -12,6 +12,7 @@
 <meta property="og:description" content="The honest odds & expected value calculator. No fake predictions — just your real probability and EV.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23f2b73c'/><circle cx='50' cy='50' r='26' fill='%230e1726'/></svg>">
+<script src="https://fastly.jsdelivr.net/npm/js-sha256@0.9.0/src/sha256.min.js"></script>
 <style>
   :root{
     --ink:#0e1726;
@@ -109,6 +110,24 @@
 
   #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--paper);color:var(--ink);padding:12px 18px;border-radius:6px;font-size:.9rem;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:90vw;}
   #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* Pro unlock modal */
+  #unlockModal{display:none;position:fixed;inset:0;background:rgba(6,10,20,.78);z-index:9999;align-items:center;justify-content:center;padding:20px;}
+  #unlockModal.open{display:flex;}
+  .unlock-card{background:var(--ink2);border:1px solid var(--gold);border-radius:12px;padding:28px;width:min(92%,440px);color:var(--paper);}
+  .unlock-card h3{color:var(--gold);margin:0 0 10px;font-size:1.3rem;}
+  .unlock-card .desc{color:var(--muted);margin:0 0 18px;font-size:.95rem;}
+  .unlock-card input{width:100%;box-sizing:border-box;padding:12px 14px;border-radius:6px;border:1px solid var(--ink3);background:var(--ink);color:var(--paper);font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;font-size:16px;}
+  .unlock-tip{min-height:22px;margin:12px 0;font-size:.9rem;}
+  .unlock-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:16px;}
+  .unlock-actions button{padding:10px 16px;border-radius:6px;cursor:pointer;font-weight:700;font-size:.95rem;}
+  .unlock-close{background:transparent;border:1px solid var(--ink3);color:var(--muted);}
+  .unlock-submit{background:var(--gold);color:var(--gold-ink);border:1px solid var(--gold);}
+  .unlock-card .fine{font-size:.75rem;color:var(--muted);margin-top:18px;}
+  .pro-lock{display:block;}
+  .pro-feature{display:none;}
+  body.unlocked .pro-lock{display:none;}
+  body.unlocked .pro-feature{display:block;}
 
   @media (max-width:700px){
     .hero h1{font-size:2rem;}
@@ -215,7 +234,7 @@
           <li>Custom game formats</li>
           <li>Saved picks &amp; no ads</li>
         </ul>
-        <div class="buy"><button class="btn primary" data-plan="pro" type="button">Buy Pro</button></div>
+        <div class="buy"><button class="btn primary" type="button" onclick="openUnlockModal()">Buy Pro</button></div>
       </div>
       <!-- Source code plan ($79) intentionally hidden: source sales are paused.
            To re-enable later: remove this comment block and change .pricing back to repeat(3,1fr). -->
@@ -303,6 +322,20 @@
 
 <div id="toast" role="status"></div>
 
+<div id="unlockModal" role="dialog" aria-modal="true" aria-labelledby="unlockTitle">
+  <div class="unlock-card">
+    <h3 id="unlockTitle">Unlock TrueOdds Pro</h3>
+    <p class="desc">Enter your activation code to unlock all Pro features. Your code works on any browser or device.</p>
+    <input id="activateCodeInput" type="text" placeholder="e.g. TO-XXXX-XXXX" autocomplete="off" spellcheck="false">
+    <div class="unlock-tip" id="activateTip" role="status"></div>
+    <div class="unlock-actions">
+      <button class="unlock-close" type="button" onclick="closeUnlockModal()">Close</button>
+      <button class="unlock-submit" type="button" id="submitActivateCode">Unlock Pro</button>
+    </div>
+    <p class="fine">Lost your code? Check your PayPal purchase email.</p>
+  </div>
+</div>
+
 <script>
 "use strict";
 // Replace these with your real hosted checkout links (Gumroad / Lemon Squeezy / Stripe Payment Link).
@@ -355,6 +388,61 @@ if(menuToggle && mainNav){
     }
   });
 }
+</script>
+
+<script>
+"use strict";
+// ===== Activation code unlock =====
+const VALID_CODE_HASHES = [
+  // Replace with your generated sha256 hashes (do NOT commit plaintext codes).
+  "5cebeb518c78385c88ff06020849520d0c71145d740b325a0770c9569400442"
+];
+const ACTIVATION_KEY = "trueodds_activated_hash";
+
+function normalizeCode(s){ return (s || "").trim().toUpperCase(); }
+function isActivated(){
+  const saved = localStorage.getItem(ACTIVATION_KEY);
+  return !!saved && VALID_CODE_HASHES.includes(saved);
+}
+function applyUnlocked(){ document.body.classList.add("unlocked"); }
+
+function openUnlockModal(){
+  const m = document.getElementById("unlockModal");
+  m.classList.add("open");
+  document.getElementById("activateTip").textContent = "";
+  document.getElementById("activateCodeInput").value = "";
+  document.getElementById("activateCodeInput").focus();
+}
+function closeUnlockModal(){
+  document.getElementById("unlockModal").classList.remove("open");
+}
+function submitActivation(){
+  const tip = document.getElementById("activateTip");
+  const raw = document.getElementById("activateCodeInput").value;
+  const clean = normalizeCode(raw);
+  if(!clean){ tip.textContent = "Please enter your activation code."; tip.style.color = "var(--red)"; return; }
+  const h = sha256(clean);
+  if(VALID_CODE_HASHES.includes(h)){
+    localStorage.setItem(ACTIVATION_KEY, h);
+    applyUnlocked();
+    tip.textContent = "Unlocked! Pro features are now available.";
+    tip.style.color = "var(--green)";
+    setTimeout(closeUnlockModal, 900);
+  } else {
+    tip.textContent = "Invalid activation code — please double-check it.";
+    tip.style.color = "var(--red)";
+  }
+}
+
+document.getElementById("submitActivateCode").addEventListener("click", submitActivation);
+document.getElementById("activateCodeInput").addEventListener("keydown", function(e){
+  if(e.key === "Enter") submitActivation();
+});
+document.getElementById("unlockModal").addEventListener("click", function(e){
+  if(e.target === this) closeUnlockModal();
+});
+
+if(isActivated()) applyUnlocked();
 </script>
 
 <script type="application/ld+json">
