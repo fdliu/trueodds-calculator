@@ -234,7 +234,7 @@
           <li>Custom game formats</li>
           <li>Saved picks &amp; no ads</li>
         </ul>
-        <div class="buy"><button class="btn primary" type="button" onclick="openUnlockModal()">Buy Pro</button></div>
+        <div class="buy"><button class="btn primary" type="button" onclick="buy('pro')">Buy Pro</button></div>
       </div>
       <!-- Source code plan ($79) intentionally hidden: source sales are paused.
            To re-enable later: remove this comment block and change .pricing back to repeat(3,1fr). -->
@@ -252,7 +252,8 @@
       </div>
       -->
     </div>
-    <p class="pricing-note">Checkout is hosted by Gumroad / Lemon Squeezy (Merchant of Record) — VAT and sales tax are handled for you. Payouts via PayPal or Payoneer.</p>
+    <p class="pricing-note">Secure one-time payment via PayPal. Your activation code is emailed after purchase.</p>
+    <p class="pricing-note">Already purchased? <a href="#" onclick="openUnlockModal(); return false;">Enter your activation code</a></p>
   </section>
 
   <section id="faq">
@@ -293,11 +294,11 @@
     <div class="legal">
       <div class="legal-item">
         <h3>Privacy</h3>
-        <p>TrueOdds runs entirely in your browser. There is no account, no server, and no tracking. Your saved numbers stay in your own browser (localStorage) and never leave your device. If you buy, the payment is processed by Gumroad or Lemon Squeezy under their privacy policy.</p>
+        <p>TrueOdds runs entirely in your browser. There is no account, no server, and no tracking. Your saved numbers stay in your own browser (localStorage) and never leave your device. If you buy, the payment is processed by PayPal under their privacy policy.</p>
       </div>
       <div class="legal-item">
         <h3>30-day refund</h3>
-        <p>Every paid purchase includes a 30-day, no-questions-asked money-back guarantee. Within 30 days of purchase, request a refund through Gumroad or Lemon Squeezy and you receive a full refund.</p>
+        <p>Every paid purchase includes a 30-day, no-questions-asked money-back guarantee. Within 30 days of purchase, request a refund through PayPal and you receive a full refund.</p>
       </div>
       <div class="legal-item">
         <h3>Where the data comes from</h3>
@@ -312,7 +313,7 @@
   </section>
 
   <footer>
-    <div>© 2026 TrueOdds. One-time payments via Gumroad / Lemon Squeezy.</div>
+    <div>© 2026 TrueOdds. One-time payments via PayPal.</div>
     <div class="foot-links">
       <a href="#trust">Privacy</a><a href="#trust">Refunds</a><a href="#trust">Data sources</a>
     </div>
@@ -338,17 +339,17 @@
 
 <script>
 "use strict";
-// Replace these with your real hosted checkout links (Gumroad / Lemon Squeezy / Stripe Payment Link).
-// Keep the placeholder "YOUR_ACCOUNT" as long as the link is not configured.
+// Replace with your PayPal payment link (PayPal Payment Link / Buy Now button).
+// Keep "YOUR_LINK_ID" until you paste your real link.
 const CHECKOUT = {
-  pro: "https://YOUR_ACCOUNT.gumroad.com/l/trueodds-pro",
-  source: "https://YOUR_ACCOUNT.gumroad.com/l/trueodds-source"
+  pro: "https://www.paypal.com/ncp/payment/YOUR_LINK_ID",
+  source: "https://www.paypal.com/ncp/payment/YOUR_LINK_ID"
 };
 
 function buy(plan){
   const url = CHECKOUT[plan];
-  if(!url || url.indexOf("YOUR_ACCOUNT") !== -1){
-    showToast("Checkout not configured yet — paste your Gumroad or Lemon Squeezy link into CHECKOUT in the code.");
+  if(!url || url.indexOf("YOUR_LINK_ID") !== -1){
+    showToast("Checkout not configured yet — paste your PayPal payment link into CHECKOUT in the code.");
     return;
   }
   window.location.href = url;
