@@ -11,6 +11,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="TrueOdds">
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAC3ElEQVR42u3dgY0aQRBFwYmM+AiXDCCFRWJW9Lz60kuA6ZIs+w6vZWZmZmZmZmZmZmZmZpf2ej7eO/MJW+LQwTAHD4Q5eCDM0cNgjh4Gc/ggmMMHwRw+CObwQTCHD4I5fBAcvkBw/ILA4QsExy8IHL5AcPyCwPELAocvEBy/IHD8gsDxCwLHLwgcvyBw/ILA8QsCxy8IHL8gcPyCwPELAscvCBy/IABAADh+QeD4BYHjFwQACADHLwgcvyAAQF0AHkxZBB5KaQQeSVkAHkhpBB5HWQAeRmkEHkVZAB5EaQQeQ1kAHkJpBB5BWQAeQGkEPnxlAUz7kOy7QQAAAACc80cfOxvArQgAAAAAAAAoApj6NwV2PoBbEAAAAAAAAFAEMPkfS6wBYCsCAAAAAAAAAAAAgBiA6T8wZR0AWxAAAAAAAAAAAAAAxACc8EsT1gLwUwQAAAAAAAAAAAAAAAAAAAAAAJAA4Gs3lEbgQxQAEgASABIAEgASABIAEgASABIAEgASABIAEgASABIAEgASABIAEgASABIA0p8B8MVYvhgrffwAAAAAAAAAAAAAAAAAAAAAAJAC4D/JAyB9/AAAAAAAAAAAAABRANMRWAfA2jUAAAAAAAAAAACAIIDJCKwBYO0eAAAAAAAAVQBTEdj5ANZdAwAAAAAAoApgIgI7G8C6ewAAkAbgK1OUPn4AlAcAgdLHD4DyACBQ+vgBUB4ABEofPwDKA4BA6eMHQHkAECh9/AAoDwACpY8fAuWPHwDlAUCg9PFDoPzxA6A8AAiUPn4IlD9+CJQ/fgCUBwCB0scPgfLHD4Hyxw+B8scPgfLHD4HjNwgcv0Hg+A0Cx28QOH6DwPEbBI7fIHD8BoLDNwgcv0Hg+A0Eh28QOH4DweEbBI7fQHD4BoLDNxAcvoHg8A0Eh28gOHwDweEbDI7eshi8qKVAeDFLgfAiloDhEzYzMzMzMzMzMzMzM7u2D6i9hgbvNFDJAAAAAElFTkSuQmCC">
+<script src="https://fastly.jsdelivr.net/npm/js-sha256@0.9.0/src/sha256.min.js"></script>
 <style>
   :root{
     --bg:#0d1117; --card:#161b22; --border:#30363d;
@@ -70,6 +71,20 @@
     td.rowhead{display:block;font-weight:700;color:var(--text);border-bottom:1px solid var(--border);padding-bottom:8px;margin-bottom:6px;}
     td.rowhead::before, td[data-label=""]::before{content:"";}
   }
+
+  /* Pro unlock modal */
+  #unlockModal{display:none;position:fixed;inset:0;background:rgba(1,4,9,.8);z-index:9999;align-items:center;justify-content:center;padding:20px;}
+  #unlockModal.open{display:flex;}
+  .unlock-card{background:var(--card);border:1px solid var(--accent);border-radius:12px;padding:28px;width:min(92%,440px);color:var(--text);}
+  .unlock-card h3{color:var(--accent);margin:0 0 10px;font-size:1.25rem;}
+  .unlock-card .desc{color:var(--muted);margin:0 0 18px;font-size:.95rem;}
+  .unlock-card input{width:100%;box-sizing:border-box;padding:12px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:ui-monospace,Consolas,monospace;font-size:16px;}
+  .unlock-tip{min-height:22px;margin:12px 0;font-size:.9rem;}
+  .unlock-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:16px;}
+  .unlock-actions button{padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:700;font-size:.95rem;width:auto;}
+  .unlock-close{background:transparent;border:1px solid var(--border);color:var(--muted);}
+  .unlock-submit{background:var(--accent);color:#0d1117;border:1px solid var(--accent);}
+  .unlock-card .fine{font-size:.75rem;color:var(--muted);margin-top:18px;}
 </style>
 </head>
 <body>
@@ -262,6 +277,20 @@
   </div>
 
   <p class="disclaimer">Entertainment only. This tool does not predict results or improve your odds — no tool can, because draws are independent random events. It is not affiliated with or endorsed by Powerball, Mega Millions, EuroMillions or any game operator. 18+. Play responsibly.</p>
+</div>
+
+<div id="unlockModal" role="dialog" aria-modal="true" aria-labelledby="unlockTitle">
+  <div class="unlock-card">
+    <h3 id="unlockTitle">Unlock TrueOdds Pro</h3>
+    <p class="desc">Enter your activation code to unlock all Pro features. Your code works on any browser or device.</p>
+    <input id="activateCodeInput" type="text" placeholder="e.g. TO-XXXX-XXXX" autocomplete="off" spellcheck="false">
+    <div class="unlock-tip" id="activateTip" role="status"></div>
+    <div class="unlock-actions">
+      <button class="unlock-close" type="button" onclick="closeUnlockModal()">Close</button>
+      <button class="unlock-submit" type="button" id="submitActivateCode">Unlock Pro</button>
+    </div>
+    <p class="fine">Lost your code? Check your PayPal purchase email.</p>
+  </div>
 </div>
 
 <script>
@@ -1134,6 +1163,57 @@ function setupPWA(){
   }
 }
 
+/* ---- Pro unlock (activation code) ---- */
+const VALID_CODE_HASHES = [
+  // Replace with your generated sha256 hashes (do NOT commit plaintext codes).
+  "5cebeb518c78385c88ff06020849520d0c71145d740b325a0770c9569400442"
+];
+const ACTIVATION_KEY = "trueodds_activated_hash";
+
+function normalizeCode(s){ return (s || "").trim().toUpperCase(); }
+function isActivated(){
+  const saved = localStorage.getItem(ACTIVATION_KEY);
+  return !!saved && VALID_CODE_HASHES.includes(saved);
+}
+function removeLocks(){
+  document.querySelectorAll(".lock-overlay").forEach(function(o){ o.remove(); });
+}
+function openUnlockModal(){
+  const m = document.getElementById("unlockModal");
+  m.classList.add("open");
+  document.getElementById("activateTip").textContent = "";
+  document.getElementById("activateCodeInput").value = "";
+  document.getElementById("activateCodeInput").focus();
+}
+function closeUnlockModal(){
+  document.getElementById("unlockModal").classList.remove("open");
+}
+function submitActivation(){
+  const tip = document.getElementById("activateTip");
+  const raw = document.getElementById("activateCodeInput").value;
+  const clean = normalizeCode(raw);
+  if(!clean){ tip.textContent = "Please enter your activation code."; tip.style.color = "var(--red)"; return; }
+  const h = sha256(clean);
+  if(VALID_CODE_HASHES.includes(h)){
+    localStorage.setItem(ACTIVATION_KEY, h);
+    removeLocks();
+    tip.textContent = "Unlocked! Pro features are now available.";
+    tip.style.color = "var(--green)";
+    setTimeout(closeUnlockModal, 900);
+  } else {
+    tip.textContent = "Invalid activation code — please double-check it.";
+    tip.style.color = "var(--red)";
+  }
+}
+
+document.getElementById("submitActivateCode").addEventListener("click", submitActivation);
+document.getElementById("activateCodeInput").addEventListener("keydown", function(e){
+  if(e.key === "Enter") submitActivation();
+});
+document.getElementById("unlockModal").addEventListener("click", function(e){
+  if(e.target === this) closeUnlockModal();
+});
+
 function init(){
   const sel = $("game");
   Object.keys(GAMES).forEach(k => {
@@ -1188,9 +1268,13 @@ function init(){
   autoCheckOnLoad();
   setupPWA();
 
-  document.querySelectorAll(".lock-overlay").forEach(function(o){
-    o.addEventListener("click", function(){ window.location.href = "index.html#pricing"; });
-  });
+  if(isActivated()){
+    removeLocks();
+  } else {
+    document.querySelectorAll(".lock-overlay").forEach(function(o){
+      o.addEventListener("click", openUnlockModal);
+    });
+  }
 }
 init();
 </script>
