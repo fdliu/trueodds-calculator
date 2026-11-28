@@ -7,19 +7,19 @@
 // ---------------------------------------------------------------
 const crypto = require('crypto');
 
-// ===== 配置 =====
-const COUNT = 20;   // 生成多少个激活码，按需修改
+// ===== config =====
+const COUNT = 20;   // how many codes to generate
 const PREFIX = "TO-";
-const SEG_LEN = 6;  // 每段长度：TO-XXXXXX-XXXXXX（12 位随机，约 2^60 种，抗暴力枚举）
-const CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // 去掉易混淆的 0/O、1/I
+const SEG_LEN = 6;  // chars per segment: TO-XXXXXX-XXXXXX (12 random chars, ~2^60 space)
+const CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no 0/O, no 1/I
 
-// 用 CSPRNG 而不是 Math.random，避免可预测的随机源
+// CSPRNG instead of Math.random, so the sequence is not predictable
 function randomStr(len) {
   let s = "";
   while (s.length < len) {
     const b = crypto.randomBytes(len * 2);
     for (let i = 0; i < b.length && s.length < len; i++) {
-      // 只取落在字母表整数倍区间内的字节，避免取模偏置
+      // discard bytes above the largest multiple of the alphabet size to avoid modulo bias
       if (b[i] < 256 - (256 % CHARS.length)) {
         s += CHARS[b[i] % CHARS.length];
       }
@@ -42,7 +42,7 @@ for (let i = 0; i < COUNT; i++) {
   resultHash.push(`"${h}"`);
 }
 
-console.log("===== 明文激活码（发给客户，自己单独保存，勿提交到仓库） =====");
+console.log("===== PLAINTEXT CODES (send to buyers; keep offline, never commit) =====");
 console.log(resultPlain.join("\n"));
-console.log("\n===== VALID_CODE_HASHES 数组（复制进 index.html） =====");
+console.log("\n===== VALID_CODE_HASHES array (paste into the page) =====");
 console.log(`const VALID_CODE_HASHES = [\n  ${resultHash.join(",\n  ")}\n];`);
