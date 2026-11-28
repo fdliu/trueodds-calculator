@@ -10,7 +10,7 @@ const crypto = require('crypto');
 // ===== 配置 =====
 const COUNT = 20;   // 生成多少个激活码，按需修改
 const PREFIX = "TO-";
-const SEG_LEN = 4;  // 每段长度：TO-XXXX-XXXX
+const SEG_LEN = 6;  // 每段长度：TO-XXXXXX-XXXXXX（12 位随机，约 2^60 种，抗暴力枚举）
 const CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // 去掉易混淆的 0/O、1/I
 
 // 用 CSPRNG 而不是 Math.random，避免可预测的随机源
