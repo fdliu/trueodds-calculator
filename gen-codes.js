@@ -1,14 +1,29 @@
+// ---------------------------------------------------------------
+// LOCAL UTILITY — not part of the shipped site.
+// 1) Run with `node gen-codes.js`.
+// 2) Keep the plaintext list offline. NEVER commit the plaintext
+//    output (codes.txt / codes.csv are git-ignored).
+// 3) Only the SHA-256 hashes go into the page.
+// ---------------------------------------------------------------
 const crypto = require('crypto');
 
 // ===== 配置 =====
 const COUNT = 20;   // 生成多少个激活码，按需修改
 const PREFIX = "TO-";
+const SEG_LEN = 4;  // 每段长度：TO-XXXX-XXXX
 const CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // 去掉易混淆的 0/O、1/I
 
+// 用 CSPRNG 而不是 Math.random，避免可预测的随机源
 function randomStr(len) {
   let s = "";
-  for (let i = 0; i < len; i++) {
-    s += CHARS[Math.floor(Math.random() * CHARS.length)];
+  while (s.length < len) {
+    const b = crypto.randomBytes(len * 2);
+    for (let i = 0; i < b.length && s.length < len; i++) {
+      // 只取落在字母表整数倍区间内的字节，避免取模偏置
+      if (b[i] < 256 - (256 % CHARS.length)) {
+        s += CHARS[b[i] % CHARS.length];
+      }
+    }
   }
   return s;
 }
@@ -21,7 +36,7 @@ const resultPlain = [];
 const resultHash = [];
 
 for (let i = 0; i < COUNT; i++) {
-  const code = PREFIX + randomStr(4) + "-" + randomStr(4);
+  const code = PREFIX + randomStr(SEG_LEN) + "-" + randomStr(SEG_LEN);
   const h = sha256(code);
   resultPlain.push(code);
   resultHash.push(`"${h}"`);

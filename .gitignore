@@ -1,3 +1,22 @@
+# Never commit plaintext activation codes / customer records
+codes.txt
+codes.csv
+valid-codes.txt
+*.codes.txt
+*.codes.csv
+
+# Credentials & secrets
+.env
+.env.*
+*.key
+*.pem
+*secret*
+
+# Temp verification files
 *.check.js
+
+# OS / editor noise
 .DS_Store
 Thumbs.db
+.vscode/
+.idea/

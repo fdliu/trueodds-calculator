@@ -2,7 +2,9 @@
 
 **The honest odds & EV tool.** TrueOdds shows your real odds and expected value (EV) for Powerball, Mega Millions and EuroMillions — with no fake "winning predictions," because no tool can predict an independent random draw.
 
-This is a single-file, zero-dependency web app that runs entirely in the browser. Nothing to build, nothing to install.
+A single-file, zero-dependency web app that runs entirely in your browser. Nothing to build, nothing to install.
+
+**Live demo:** https://fdliu.github.io/trueodds-calculator/
 
 ## Features
 
@@ -35,10 +37,9 @@ This is a single-file, zero-dependency web app that runs entirely in the browser
 | File | What it is |
 |---|---|
 | `calculator.html` | The single-file calculator app (all CSS + JS inline). |
-| `index.html` | Marketing / sales page with pricing and checkout links. |
+| `index.html` | Landing page with pricing and checkout links. |
 | `sw.js` | PWA service worker for offline caching. |
-| `product-plan.md` | Math formulas, English landing-page copy, and pricing rationale. |
-| `seo-and-checkout.md` | SEO keyword strategy and payment-channel comparison. |
+| `gen-codes.js` | Local utility that generates activation codes and their SHA-256 hashes. |
 
 ## Run it
 
@@ -46,51 +47,46 @@ Open `calculator.html` in any modern browser — no server, no build step.
 
 ### PWA (install + offline)
 
-For "Add to Home Screen" and offline mode:
-
 1. Serve the folder over **HTTPS** (or `localhost`).
 2. Keep `sw.js` in the **same directory** as the HTML files.
 3. Open the page and install it from the browser menu.
 
-> Double-clicking `file://` works for the app itself, but browsers block service workers on `file://`, so PWA features need HTTPS/localhost. Static hosts like GitHub Pages, Netlify, or Vercel work out of the box.
+> Double-clicking `file://` works for the app itself, but browsers block service workers on `file://`, so PWA features need HTTPS/localhost. Static hosts such as GitHub Pages, Netlify or Vercel work out of the box.
 
 ## Tech
 
 - Plain HTML + CSS + vanilla JavaScript, all inlined in one file.
 - Zero dependencies, no framework, no bundler, no backend.
-- Data is inlined into the JS (the page cannot `fetch` local files under `file://`).
+- Data is inlined into the JS (a `file://` page cannot `fetch` local files).
 
 ## How the math works
 
-See `product-plan.md` for the full formulas. In short:
-
-- `C(n, k)` combinations.
-- Hypergeometric match probability per ball set.
-- `Odds = 1 / P`.
-- Jackpot EV uses a Poisson splitting model: `EV = J · (1 − e^(−N·p)) / N`.
-- Total EV = jackpot EV + Σ(tier prize × tier probability) − ticket price.
+- `C(n, k)` — combinations, `n! / (k! · (n-k)!)`.
+- Match probability per ball set — hypergeometric: `P(exactly x) = C(pick, x) · C(total-pick, pick-x) / C(total, pick)`.
+- Prize tier probability — main and bonus draws are independent: `P(tier) = P(main, x) · P(bonus, y)`.
+- Odds — `1 / P(tier)`.
+- Jackpot EV with Poisson prize splitting — `EV_jackpot = J · (1 − e^(−N·p)) / N`.
+- Total EV — `EV_jackpot + Σ(tier prize × tier probability) − ticket price`.
 
 ## Data sources
 
 - **Draw history** (`DRAWS` inside the HTML) is real recent data from `powerball.com` and `national-lottery.com`, inlined so the tool works offline.
-- **Jackpot trend** currently uses **sample data** (clearly labeled in the UI). Production should replace it with a live jackpot feed, or users can import their own CSV (`date,jackpot`).
+- **Jackpot trend** currently uses **sample data** (clearly labeled in the UI). Replace it with a live jackpot feed, or import your own CSV (`date,jackpot`).
 - The tool makes **no predictions** and does not claim hot/cold numbers change future odds — draws are independent.
 
-## Pricing & licensing
+## Pro access
 
-One-time payment, lifetime access, 30-day money-back.
+Pro features are unlocked by an activation code. The page ships only SHA-256 **hashes** of valid codes, never the plaintext codes, and the check runs locally in your browser.
 
-| Tier | Price | Includes |
-|---|---|---|
-| Free | $0 | Odds calculator, quick pick |
-| Pro | $24 | Full EV tools, all games, saved numbers |
-| Source code | $79 | This repository, for use in your own projects |
+Codes are issued with a purchase. If you bought Pro and lost your code, use the contact address on the landing page.
 
-> This repo ships the full tool as a single file. The Free/Pro split above is the product packaging; it is not enforced by a paywall in the code.
+## Privacy
 
-### License
+Everything runs client-side. No account, no server, no analytics, no tracking. Saved number sets live in your own browser's `localStorage` and never leave the device.
 
-This source is **proprietary**. Access is for evaluation and personal use only. Commercial use, redistribution, or resale requires a purchased Source Code license. No open-source license is granted simply by having access to this repository.
+## License
+
+All rights reserved. This repository is public for transparency and review. No open-source license is granted: copying the code into another product, redistributing it, or reselling it requires prior written permission.
 
 ## Disclaimer
 

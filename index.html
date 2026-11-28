@@ -236,21 +236,6 @@
         </ul>
         <div class="buy"><button class="btn primary" type="button" onclick="buy('pro')">Buy Pro</button></div>
       </div>
-      <!-- Source code plan ($79) intentionally hidden: source sales are paused.
-           To re-enable later: remove this comment block and change .pricing back to repeat(3,1fr). -->
-      <!--
-      <div class="plan">
-        <div class="name">Source code</div>
-        <div class="price">$79</div>
-        <div class="freq">one-time</div>
-        <ul>
-          <li>Full app source + docs</li>
-          <li>Rebrand &amp; resell rights</li>
-          <li>Landing page included</li>
-        </ul>
-        <div class="buy"><button class="btn ghost" data-plan="source" type="button">Buy source</button></div>
-      </div>
-      -->
     </div>
     <p class="pricing-note">Secure one-time payment via PayPal. Your activation code is emailed after purchase.</p>
     <p class="pricing-note">Already purchased? <a href="#" onclick="openUnlockModal(); return false;">Enter your activation code</a></p>
@@ -340,17 +325,15 @@
 
 <script>
 "use strict";
-// Replace with your PayPal payment link (PayPal Payment Link / Buy Now button).
-// Keep "YOUR_LINK_ID" until you paste your real link.
+// PayPal payment link for the Pro plan (Payment Link / Buy Now).
 const CHECKOUT = {
-  pro: "https://www.paypal.com/ncp/payment/89VNVNLATKEYS",
-  source: "https://www.paypal.com/ncp/payment/YOUR_LINK_ID"
+  pro: "https://www.paypal.com/ncp/payment/89VNVNLATKEYS"
 };
 
 function buy(plan){
   const url = CHECKOUT[plan];
-  if(!url || url.indexOf("YOUR_LINK_ID") !== -1){
-    showToast("Checkout not configured yet — paste your PayPal payment link into CHECKOUT in the code.");
+  if(!url){
+    showToast("Checkout is temporarily unavailable. Please try again later.");
     return;
   }
   window.location.href = url;
